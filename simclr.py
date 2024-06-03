@@ -25,7 +25,7 @@ class SimCLR(object):
 
     def info_nce_loss(self, features):
 
-        labels = torch.cat([torch.arange(self.args.batch_size) for i in range(self.args.n_views)], dim=0)
+        labels = torch.cat([torch.arange(self.args.batch_size) for i in range(self.args.n_views)], dim=0) #[512]
         labels = (labels.unsqueeze(0) == labels.unsqueeze(1)).float()
         labels = labels.to(self.args.device)
 
@@ -37,7 +37,7 @@ class SimCLR(object):
         # assert similarity_matrix.shape == labels.shape
 
         # discard the main diagonal from both: labels and similarities matrix
-        mask = torch.eye(labels.shape[0], dtype=torch.bool).to(self.args.device)
+        mask = torch.eye(labels.shape[0], dtype=torch.bool).to(self.args.device) #[512,512]
         labels = labels[~mask].view(labels.shape[0], -1)
         similarity_matrix = similarity_matrix[~mask].view(similarity_matrix.shape[0], -1)
         # assert similarity_matrix.shape == labels.shape
@@ -55,7 +55,6 @@ class SimCLR(object):
         return logits, labels
 
     def train(self, train_loader):
-
         scaler = GradScaler(enabled=self.args.fp16_precision)
 
         # save config file
@@ -70,10 +69,13 @@ class SimCLR(object):
                 images = torch.cat(images, dim=0)
 
                 images = images.to(self.args.device)
-
+                print("images",images.shape)
                 with autocast(enabled=self.args.fp16_precision):
                     features = self.model(images)
+                    print("features",features.shape)
                     logits, labels = self.info_nce_loss(features)
+                    print("logits",logits.shape)
+                    print("labels",labels.shape)
                     loss = self.criterion(logits, labels)
 
                 self.optimizer.zero_grad()
