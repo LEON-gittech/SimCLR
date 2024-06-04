@@ -8,6 +8,8 @@ from torch.cuda.amp import GradScaler, autocast
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 from utils import save_config_file, accuracy, save_checkpoint
+# import seaborn as sns
+import matplotlib.pyplot as plt
 
 torch.manual_seed(0)
 
@@ -25,7 +27,15 @@ class SimCLR(object):
 
     def info_nce_loss(self, features):
         labels = torch.cat([torch.arange(self.args.batch_size) for i in range(self.args.n_views)], dim=0) #[512]
-        labels = (labels.unsqueeze(0) == labels.unsqueeze(1)).float()
+        labels = (labels.unsqueeze(0) == labels.unsqueeze(1)).float() #[512,512]
+
+        labels_np = labels.numpy()
+        # 使用imshow函数显示矩阵
+        plt.imshow(labels_np, cmap='Greys')
+        plt.colorbar()  # 显示颜色条
+        plt.savefig("/opt/tiger/SimCLR/label.jpg")
+        # plt.show()
+        
         labels = labels.to(self.args.device)
 
         features = F.normalize(features, dim=1)
