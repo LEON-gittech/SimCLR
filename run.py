@@ -55,7 +55,7 @@ parser.add_argument('--gpu-index', default=0, type=int, help='Gpu index.')
 
 
 def main():
-    arg_str = "-data /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/datasets/".split(" ")
+    arg_str = "-data /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/cropped_second_stage_imgs/".split(" ")
     args = parser.parse_args(arg_str)
     assert args.n_views == 2, "Only two view training is supported. Please use --n-views 2."
     # check if gpu training is available

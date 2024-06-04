@@ -31,11 +31,11 @@ class SimCLR(object):
 
         labels_np = labels.numpy()
         # 使用imshow函数显示矩阵
-        plt.imshow(labels_np, cmap='Greys')
-        plt.colorbar()  # 显示颜色条
-        plt.savefig("/opt/tiger/SimCLR/label.jpg")
+        # plt.imshow(labels_np, cmap='Greys')
+        # plt.colorbar()  # 显示颜色条
+        # plt.savefig("/opt/tiger/SimCLR/label.jpg")
         # plt.show()
-        
+
         labels = labels.to(self.args.device)
 
         features = F.normalize(features, dim=1)
@@ -78,13 +78,13 @@ class SimCLR(object):
                 images = torch.cat(images, dim=0)
 
                 images = images.to(self.args.device)
-                print("images",images.shape)
+                # print("images",images.shape)
                 with autocast(enabled=self.args.fp16_precision):
                     features = self.model(images)
-                    print("features",features.shape)
+                    # print("features",features.shape)
                     logits, labels = self.info_nce_loss(features)
-                    print("logits",logits.shape)
-                    print("labels",labels.shape)
+                    # print("logits",logits.shape)
+                    # print("labels",labels.shape)
                     loss = self.criterion(logits, labels)
 
                 self.optimizer.zero_grad()
