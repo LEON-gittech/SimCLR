@@ -53,7 +53,8 @@ parser.add_argument('--gpu-index', default=0, type=int, help='Gpu index.')
 
 
 def main():
-    args = parser.parse_args()
+    arg_str = "-data /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/datasets/".split(" ")
+    args = parser.parse_args(arg_str)
     assert args.n_views == 2, "Only two view training is supported. Please use --n-views 2."
     # check if gpu training is available
     if not args.disable_cuda and torch.cuda.is_available():
