@@ -7,6 +7,7 @@ from models.resnet_simclr import ResNetSimCLR
 from simclr import SimCLR
 from data_aug.face_dataset import FaceDataset
 from torch.utils.data import DataLoader
+import os
 
 model_names = sorted(name for name in models.__dict__
                      if name.islower() and not name.startswith("__")
@@ -17,11 +18,12 @@ parser.add_argument('-data', metavar='DIR', default='./datasets',
                     help='path to dataset')
 parser.add_argument('-dataset-name', default='stl10',
                     help='dataset name', choices=['stl10', 'cifar10'])
-parser.add_argument('-a', '--arch', metavar='ARCH', default='resnet18',
+parser.add_argument('-a', '--arch', metavar='ARCH', default='resnet50',
                     choices=model_names,
                     help='model architecture: ' +
                          ' | '.join(model_names) +
                          ' (default: resnet50)')
+parser.add_argument("--model_name_or_path", default="")
 parser.add_argument('-j', '--workers', default=32, type=int, metavar='N',
                     help='number of data loading workers (default: 32)')
 parser.add_argument('--epochs', default=200, type=int, metavar='N',
@@ -53,6 +55,15 @@ parser.add_argument('--n-views', default=2, type=int, metavar='N',
                     help='Number of views for contrastive learning training.')
 parser.add_argument('--gpu-index', default=0, type=int, help='Gpu index.')
 
+def clean_state_dict(state_dict, prefix='module.'):
+    """
+    去掉state_dict中的指定前缀。
+    """
+    keys = sorted([key for key in state_dict if key.startswith(prefix)])
+    for key in keys:
+        state_dict[key.replace(prefix, '')] = state_dict[key]
+        del state_dict[key]
+    return state_dict
 
 def main():
     arg_str = "-data /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/cropped_second_stage_imgs/".split(" ")
@@ -77,6 +88,14 @@ def main():
         num_workers=args.workers, pin_memory=True, drop_last=True)
 
     model = ResNetSimCLR(base_model=args.arch, out_dim=args.out_dim)
+    
+    if args.pretrained:
+        if os.path.isfile(args.pretrained):
+            checkpoint = torch.load(args.pretrained)
+            state_dict = clean_state_dict(checkpoint["state_dict"],"module.encoder_q.")
+            model.load_state_dict(state_dict, strict=False)
+        else:
+            print("=> no checkpoint found at '{}'".format(args.pretrained))
 
     optimizer = torch.optim.Adam(model.parameters(), args.lr, weight_decay=args.weight_decay)
 
