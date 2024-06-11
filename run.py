@@ -67,9 +67,10 @@ def clean_state_dict(state_dict, prefix='module.'):
     return state_dict
 
 def main():
-    arg_str = "-data /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/cropped_second_stage_imgs_2million/ -b 32 --pretrained /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model_2m/checkpoint_0010.pth.tar --fp16-precision --output_path /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model_2m".split(" ")
+    arg_str = "-data /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/cropped_second_stage_imgs_2million/ -b 512 --pretrained /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model_2m/checkpoint_0010.pth.tar --fp16-precision --output_path /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model_2m_next".split(" ")
     args = parser.parse_args(arg_str)
     print(args)
+    if not os.path.exists(args.output_path): os.mkdir(args.output_path)
     assert args.n_views == 2, "Only two view training is supported. Please use --n-views 2."
     # check if gpu training is available
     if not args.disable_cuda and torch.cuda.is_available():
