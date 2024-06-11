@@ -15,7 +15,6 @@ torch.manual_seed(0)
 
 
 class SimCLR(object):
-
     def __init__(self, *args, **kwargs):
         self.args = kwargs['args']
         self.model = kwargs['model'].to(self.args.device)
@@ -29,7 +28,7 @@ class SimCLR(object):
         labels = torch.cat([torch.arange(self.args.batch_size) for i in range(self.args.n_views)], dim=0) #[512]
         labels = (labels.unsqueeze(0) == labels.unsqueeze(1)).float() #[512,512]
 
-        labels_np = labels.numpy()
+        # labels_np = labels.numpy()
         # 使用imshow函数显示矩阵
         # plt.imshow(labels_np, cmap='Greys')
         # plt.colorbar()  # 显示颜色条
@@ -54,7 +53,7 @@ class SimCLR(object):
         # select and combine multiple positives
         positives = similarity_matrix[labels.bool()].view(labels.shape[0], -1)
 
-        # select only the negatives the negatives
+        # select only the negatives
         negatives = similarity_matrix[~labels.bool()].view(similarity_matrix.shape[0], -1)
 
         logits = torch.cat([positives, negatives], dim=1)
@@ -74,7 +73,8 @@ class SimCLR(object):
         logging.info(f"Training with gpu: {self.args.disable_cuda}.")
 
         for epoch_counter in range(self.args.epochs):
-            for images, _ in tqdm(train_loader):
+            for images, idxs in tqdm(train_loader):
+                print(idxs)
                 images = torch.cat(images, dim=0)
 
                 images = images.to(self.args.device)

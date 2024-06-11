@@ -28,7 +28,7 @@ parser.add_argument('-j', '--workers', default=32, type=int, metavar='N',
                     help='number of data loading workers (default: 32)')
 parser.add_argument('--epochs', default=200, type=int, metavar='N',
                     help='number of total epochs to run')
-parser.add_argument('-b', '--batch-size', default=1024, type=int,
+parser.add_argument('-b', '--batch-size', default=512, type=int,
                     metavar='N',
                     help='mini-batch size (default: 256), this is the total '
                          'batch size of all GPUs on the current node when '
@@ -67,7 +67,7 @@ def clean_state_dict(state_dict, prefix='module.'):
     return state_dict
 
 def main():
-    arg_str = "-data /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/cropped_second_stage_imgs_2million/ --pretrained /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model/checkpoint_0099.pth.tar --fp16-precision --output_path /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model_2m".split(" ")
+    arg_str = "-data /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/cropped_second_stage_imgs_2million/ -b 32 --pretrained /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model_2m/checkpoint_0010.pth.tar --fp16-precision --output_path /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model_2m".split(" ")
     args = parser.parse_args(arg_str)
     print(args)
     assert args.n_views == 2, "Only two view training is supported. Please use --n-views 2."
