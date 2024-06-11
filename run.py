@@ -23,12 +23,12 @@ parser.add_argument('-a', '--arch', metavar='ARCH', default='resnet50',
                     help='model architecture: ' +
                          ' | '.join(model_names) +
                          ' (default: resnet50)')
-parser.add_argument("--model_name_or_path", default="")
+parser.add_argument("--pretrained", default="")
 parser.add_argument('-j', '--workers', default=32, type=int, metavar='N',
                     help='number of data loading workers (default: 32)')
 parser.add_argument('--epochs', default=200, type=int, metavar='N',
                     help='number of total epochs to run')
-parser.add_argument('-b', '--batch-size', default=256, type=int,
+parser.add_argument('-b', '--batch-size', default=1024, type=int,
                     metavar='N',
                     help='mini-batch size (default: 256), this is the total '
                          'batch size of all GPUs on the current node when '
@@ -54,6 +54,7 @@ parser.add_argument('--temperature', default=0.07, type=float,
 parser.add_argument('--n-views', default=2, type=int, metavar='N',
                     help='Number of views for contrastive learning training.')
 parser.add_argument('--gpu-index', default=0, type=int, help='Gpu index.')
+parser.add_argument('--output_path', default="", type=str)
 
 def clean_state_dict(state_dict, prefix='module.'):
     """
@@ -66,8 +67,9 @@ def clean_state_dict(state_dict, prefix='module.'):
     return state_dict
 
 def main():
-    arg_str = "-data /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/cropped_second_stage_imgs/".split(" ")
+    arg_str = "-data /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/cropped_second_stage_imgs_2million/ --pretrained /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model/checkpoint_0099.pth.tar --fp16-precision --output_path /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model_2m".split(" ")
     args = parser.parse_args(arg_str)
+    print(args)
     assert args.n_views == 2, "Only two view training is supported. Please use --n-views 2."
     # check if gpu training is available
     if not args.disable_cuda and torch.cuda.is_available():

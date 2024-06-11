@@ -100,8 +100,16 @@ class SimCLR(object):
                     self.writer.add_scalar('acc/top1', top1[0], global_step=n_iter)
                     self.writer.add_scalar('acc/top5', top5[0], global_step=n_iter)
                     self.writer.add_scalar('learning_rate', self.scheduler.get_lr()[0], global_step=n_iter)
-
+                    print(f'loss: {loss}, acc/top1: {top1[0]}, acc/top5: {top5[0]}, learning_rate:{self.scheduler.get_lr()[0]}')
                 n_iter += 1
+
+            checkpoint_name = 'checkpoint_{:04d}.pth.tar'.format(epoch_counter)
+            save_checkpoint({
+                'epoch': self.args.epochs,
+                'arch': self.args.arch,
+                'state_dict': self.model.state_dict(),
+                'optimizer': self.optimizer.state_dict(),
+            }, is_best=False, filename=os.path.join(self.args.output_path, checkpoint_name))
 
             # warmup for the first 10 epochs
             if epoch_counter >= 10:
@@ -116,5 +124,5 @@ class SimCLR(object):
             'arch': self.args.arch,
             'state_dict': self.model.state_dict(),
             'optimizer': self.optimizer.state_dict(),
-        }, is_best=False, filename=os.path.join(self.writer.log_dir, checkpoint_name))
-        logging.info(f"Model checkpoint and metadata has been saved at {self.writer.log_dir}.")
+        }, is_best=False, filename=os.path.join(self.args.output_path, checkpoint_name))
+        logging.info(f"Model checkpoint and metadata has been saved at {self.args.output_path}.")

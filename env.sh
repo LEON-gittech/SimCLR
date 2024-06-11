@@ -5,3 +5,5 @@ rm -rf ~/miniconda3/miniconda.sh
 
 ~/miniconda3/bin/conda init bash
 ~/miniconda3/bin/conda init zsh
+
+sudo apt install -y libgl1-mesa-glx

@@ -7,7 +7,7 @@ import cv2 as cv
 import torch
 
 class FaceDataset(Dataset):
-    def __init__(self, data_path: str, data_json="/mnt/bn/data-tns-live-llm/leon/experiments/llm/face/valid_face.json") -> None:
+    def __init__(self, data_path: str, data_json="/mnt/bn/data-tns-live-llm/leon/experiments/llm/face/valid_face_2million.json") -> None:
         self.root = data_path
         with open(data_json, "r") as f:
             self.data = json.loads(f.read())
