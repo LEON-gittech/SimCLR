@@ -17,7 +17,7 @@ parser = argparse.ArgumentParser(description='PyTorch SimCLR')
 parser.add_argument('-data', metavar='DIR', default='./datasets',
                     help='path to dataset')
 parser.add_argument('-dataset-name', default='stl10',
-                    help='dataset name', choices=['stl10', 'cifar10'])
+                    help='dataset name')
 parser.add_argument('-a', '--arch', metavar='ARCH', default='resnet50',
                     choices=model_names,
                     help='model architecture: ' +
@@ -67,7 +67,7 @@ def clean_state_dict(state_dict, prefix='module.'):
     return state_dict
 
 def main():
-    arg_str = "-data /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/cropped_second_stage_imgs_2million/ -b 512 --pretrained /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model_2m/checkpoint_0010.pth.tar --fp16-precision --output_path /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model_2m_next".split(" ")
+    arg_str = "-data /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/cropped_second_stage_imgs_2million/ -dataset-name moco -b 1024 --pretrained /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model/checkpoint_0099.pth.tar --fp16-precision --output_path /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model_2m_moco".split(" ")
     args = parser.parse_args(arg_str)
     print(args)
     if not os.path.exists(args.output_path): os.mkdir(args.output_path)
@@ -81,10 +81,11 @@ def main():
         args.device = torch.device('cpu')
         args.gpu_index = -1
 
-    # dataset = ContrastiveLearningDataset(args.data)
-    train_dataset = FaceDataset(args.data)
-
-    # train_dataset = dataset.get_dataset(args.dataset_name, args.n_views)
+    if args.dataset_name == "face": 
+        train_dataset = FaceDataset(args.data)
+    else:
+        dataset = ContrastiveLearningDataset(args.data)
+        train_dataset = dataset.get_dataset(args.dataset_name, args.n_views)
 
     train_loader = DataLoader(
         train_dataset, batch_size=args.batch_size, shuffle=True,

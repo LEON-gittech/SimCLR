@@ -3,6 +3,9 @@ from data_aug.gaussian_blur import GaussianBlur
 from torchvision import transforms, datasets
 from data_aug.view_generator import ContrastiveLearningViewGenerator
 from exceptions.exceptions import InvalidDatasetSelection
+import sys
+sys.path.append("/opt/tiger/SimCLR/data_aug")
+from face import Face
 
 
 class ContrastiveLearningDataset:
@@ -32,7 +35,13 @@ class ContrastiveLearningDataset:
                                                           transform=ContrastiveLearningViewGenerator(
                                                               self.get_simclr_pipeline_transform(96),
                                                               n_views),
-                                                          download=True)}
+                                                          download=True),
+                                                          
+                        'moco': lambda: Face(self.root_folder, 
+                                            transform=ContrastiveLearningViewGenerator(
+                                                self.get_simclr_pipeline_transform(224),
+                                                n_views)
+                                            ),}
 
         try:
             dataset_fn = valid_datasets[name]
