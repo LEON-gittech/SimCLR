@@ -28,14 +28,14 @@ class Face(VisionDataset):
         self.data = []
         for d in self.data_json:
             self.data.append(f"{d['room_id']}/{d['object1']}")
-            self.data.append(f"{d['room_id']}/{d['object2']}")
+            # self.data.append(f"{d['room_id']}/{d['object2']}")
     
     def __getitem__(self, index: int) -> Any:
         d = self.data[index]
         img_path = random.choice(os.listdir(f"{self.root}/{d}"))
         img = Image.open(f"{self.root}/{d}/{img_path}")
         img = self.transform(img)
-        return img, index
+        return img, [index,index]
     
     def __len__(self) -> int:
         return len(self.data)

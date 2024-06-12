@@ -67,7 +67,7 @@ def clean_state_dict(state_dict, prefix='module.'):
     return state_dict
 
 def main():
-    arg_str = "-data /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/cropped_second_stage_imgs_2million/ -dataset-name moco -b 1024 --pretrained /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model/checkpoint_0099.pth.tar --fp16-precision --output_path /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model_2m_moco".split(" ")
+    arg_str = "-data /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/cropped_second_stage_imgs_2million/ -dataset-name moco -b 512 --pretrained /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model/checkpoint_0099.pth.tar --fp16-precision --output_path /mnt/bn/data-tns-live-llm/leon/experiments/llm/face/trained_model_2m_moco".split(" ")
     args = parser.parse_args(arg_str)
     print(args)
     if not os.path.exists(args.output_path): os.mkdir(args.output_path)
